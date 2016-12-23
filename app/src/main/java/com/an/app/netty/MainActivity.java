@@ -84,7 +84,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     long systime = System.currentTimeMillis();
                     CharSequence systimeStr = DateFormat.format("yyyy.MM.dd.  HH:mm:ss", systime);
                     tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
-                    tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
+//                    tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
                     tvContent.append(systimeStr + System.getProperty("line.separator"));
                     int offset = tvContent.getLineCount() * tvContent.getLineHeight();
                     if (offset > tvContent.getHeight()) {
