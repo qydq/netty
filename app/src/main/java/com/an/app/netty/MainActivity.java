@@ -3,10 +3,13 @@ package com.an.app.netty;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,6 +58,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private LinearLayout llSend;
     @ViewInject(R.id.anPb)
     private ProgressBar anPb;
+    @ViewInject(R.id.tvContent)
+    private TextView tvContent;
 
     private String START_SERVICE = "com.an.app.netty.DataConnectService";
     private boolean sendding = false;//是否正在发送。
@@ -64,7 +68,19 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private boolean isConnectedToInternet = false;//是否鏈接到網絡
     private PopupWindow popupWindow;//选择的popupWindow;
     private String[] mIpArray = {"开发：117.78.48.143", "马佩：192.168.0.24"};//提供选择的ip地址。
-    private String ipAddress = null;
+    private String ipAddress = null;//ip地址。
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
+            tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
+            int offset = tvContent.getLineCount() * tvContent.getLineHeight();
+            if (offset > tvContent.getHeight()) {
+                tvContent.scrollTo(0, offset - tvContent.getHeight());
+            }
+        }
+    };
 
     @Override
     public void initView() {
@@ -242,5 +258,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         }
         editor.putBoolean("sendding", sendding);
         editor.commit();
+        Message msg = new Message();
+        msg.obj = sendding;
+        handler.sendMessage(msg);
     }
 }

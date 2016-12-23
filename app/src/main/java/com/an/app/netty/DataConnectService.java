@@ -31,7 +31,6 @@ public class DataConnectService extends Service {
             DataSendClient client = new DataSendClient(getApplicationContext());
             try {
                 client.start();
-//                            client.sendDataToService();
             } catch (Exception e) {
                 e.printStackTrace();
             }

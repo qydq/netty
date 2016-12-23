@@ -37,15 +37,11 @@ public class DataSendClient extends Thread {
     @Override
     public void run() {
         System.out.println("--qydq--正在發送數據--" + sendding);
-        if (sendding) {
-            try {
-                System.out.println("--qydq--跑呀跑跑呀跑");
-                connect();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("--qydq--跑累了歇歇吧。");
+        try {
+            System.out.println("--qydq--跑呀跑跑呀跑");
+            connect();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

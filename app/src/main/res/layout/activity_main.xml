@@ -164,12 +164,14 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="@dimen/CommDimenMargin"
             android:background="@color/CommColorLine" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/DimenNativeNational"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/CommDimenMargin"
+            android:layout_marginTop="@dimen/CommDimenMargin"
             android:gravity="center_vertical"
             android:text="@string/StringData"
             android:textColor="@color/CommTxtMainTintColor"
@@ -178,8 +180,10 @@
         <TextView
             android:id="@+id/tvContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginStart="@dimen/CommDimenMargin"
             android:layout_marginTop="@dimen/DimenMargin"
+            android:fadeScrollbars="false"
             android:gravity="center_vertical"
             android:overScrollMode="always"
             android:scrollbars="vertical"
