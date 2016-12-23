@@ -112,6 +112,11 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                                     unregisterReceiver(receiver);
                                     receiver = null;//這裏賦值為空。
                                 }
+//                                //終止發送則發出一個廣播保證真的終止(這裏由於系統權限的問題不能夠終止系統的廣播。但是可以發送其它的廣播)
+                                  //http://blog.csdn.net/ACM_TH/article/details/50509755
+//                                Intent stopIntent = new Intent(Intent.ACTION_TIME_TICK);
+//                                stopIntent.putExtra("kill", 0);
+//                                sendOrderedBroadcast(stopIntent, null);
                             }
                             editor.putBoolean("sendding", sendding);
                             editor.commit();
