@@ -38,6 +38,87 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/CommColorWhite"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/CommDimenMargin"
+            android:paddingStart="@dimen/CommDimenMargin"
+            android:paddingTop="@dimen/CommDimenMargin">
+
+            <TextView
+                android:id="@+id/tvTips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/StringTips"
+                android:textColor="@color/CommTxtMainTintColor"
+                android:textSize="@dimen/CommDimenTxtSmall" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/CommColorLine" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editTextIp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:hint="@string/StringHint"
+                    android:inputType="none"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/CommColorGray"
+                    android:textColorHint="@color/CommColorLineClicked"
+                    android:textSize="@dimen/CommDimenTxtContext" />
+
+                <ImageView
+                    android:id="@+id/ivSelector"
+                    android:layout_width="@dimen/CommDimenBarIconSmall"
+                    android:layout_height="@dimen/CommDimenBarIconSmall"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:src="@drawable/yy_drawable_selector_selector" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/DimenMargin08"
+                    android:layout_marginTop="@dimen/DimenMargin08"
+                    android:background="@color/CommColorLine" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/CommColorLine" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTpMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/CommDimenMargin"
+            android:gravity="center_vertical"
+            android:text="@string/StringIpInfo"
+            android:textColor="@color/ColorRed"
+            android:textSize="@dimen/CommDimenTxtSmall"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/CommColorWhite"
             android:orientation="vertical">
 
             <TextView
@@ -50,49 +131,60 @@
                 android:textColor="@color/CommTxtMainTintColor"
                 android:textSize="@dimen/CommDimenTxtSmall" />
 
-            <Button
-                android:id="@+id/btnSend"
+            <LinearLayout
+                android:id="@+id/llSend"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/DimenNativeNational"
+                android:layout_marginBottom="@dimen/CommDimenMargin"
                 android:background="@drawable/yy_drawable_selector_md_oppose"
+                android:clickable="true"
                 android:gravity="center"
-                android:text="@string/StringSendData"
-                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/anPb"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="@dimen/CommDimenIconSmall"
+                    android:layout_height="@dimen/CommDimenIconSmall"
+                    android:layout_marginEnd="5dp"
+                    android:max="200"
+                    android:progress="0"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/btnSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/StringSendData"
+                    android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/CommColorLine" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/DimenNativeNational"
+            android:layout_marginStart="@dimen/CommDimenMargin"
+            android:gravity="center_vertical"
+            android:text="@string/StringData"
+            android:textColor="@color/CommTxtMainTintColor"
+            android:textSize="@dimen/CommDimenTxtSmall" />
+
+        <TextView
+            android:id="@+id/tvContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/CommColorWhite"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/DimenNativeNational"
-                android:layout_marginLeft="@dimen/CommDimenMargin"
-                android:gravity="center_vertical"
-                android:text="@string/StringIp"
-                android:textColor="@color/CommTxtMainTintColor"
-                android:textSize="@dimen/CommDimenTxtSmall" />
-
-            <Button
-                android:id="@+id/btnIp1"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/DimenNativeNational"
-                android:background="@drawable/yy_drawable_selector_md_oppose"
-                android:gravity="center"
-                android:text="@string/StringIp1"
-                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
-
-            <Button
-                android:id="@+id/btnIp2"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/DimenNativeNational"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/yy_drawable_selector_md_oppose"
-                android:gravity="center"
-                android:text="@string/StringIp2"
-                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
-        </LinearLayout>
+            android:layout_marginTop="@dimen/DimenMargin"
+            android:gravity="center_vertical"
+            android:overScrollMode="always"
+            android:scrollbars="vertical"
+            android:text="123"
+            android:textColor="@color/CommTxtMainColor"
+            android:textSize="@dimen/CommDimenTxtContext" />
     </LinearLayout>
 </RelativeLayout>

@@ -1,9 +1,7 @@
 package com.an.app.netty;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.an.base.utils.DataService;
 
@@ -49,6 +47,7 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("客户端收到消息" + msg);
         String str = (String) msg;
         System.out.println("客户端收到消息" + str + " " + ++count);
     }

@@ -2,10 +2,12 @@
     <string name="app_name">netty</string>
     <string name="StringSendData">发送数据</string>
     <string name="StringSendDataMsg">点击发送数据按钮可以向服务器发送系统时间</string>
-    <string name="StringSending">正在向后台发送数据，点击终止发送可以停止服务</string>
-    <string name="StringSendingBtn">终止发送</string>
+    <string name="StringSending">正在向后台发送数据，点击可以停止发送</string>
+    <string name="StringSendingBtn">正在发送...</string>
     <string name="StringNet">网络不给力哟``请检查网络设置</string>
     <string name="StringIp">选择测试Ip</string>
-    <string name="StringIp1">192.168.0.24</string>
-    <string name="StringIp2">117.78.48.143</string>
+    <string name="StringTips">选择或输入ip地址(默认192.168.0.24)</string>
+    <string name="StringHint">请输入Ip地址</string>
+    <string name="StringIpInfo">请输入有效的ip地址哟``</string>
+    <string name="StringData">数据监测</string>
 </resources>
