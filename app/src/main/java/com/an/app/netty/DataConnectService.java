@@ -28,7 +28,7 @@ public class DataConnectService extends Service {
                 e.printStackTrace();
             }
             //在服务里面发送数据，
-            DataSendClient client = new DataSendClient(getApplicationContext());
+            DataSendClient client = new DataSendClient(DataConnectService.this);
             try {
                 client.start();
             } catch (Exception e) {

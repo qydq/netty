@@ -23,7 +23,7 @@ public class DataSendClient extends Thread {
     private static String HOST = "192.168.0.24";
     //    private static final String HOST = "117.78.48.143";
     private static final int PORT = 6008;
-    private Context context;
+    private final Context context;
     private SharedPreferences sp;
     private boolean sendding = false;
 

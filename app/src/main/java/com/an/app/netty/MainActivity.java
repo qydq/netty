@@ -1,5 +1,7 @@
 package com.an.app.netty;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,21 +67,34 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private String START_SERVICE = "com.an.app.netty.DataConnectService";
     private boolean sendding = false;//是否正在发送。
     private SharedPreferences.Editor editor;//保存是否点击服务开启的监听状态的editor
-    private DataConnectBroadcastReceiver receiver;
+    private DataConnectBroadcastReceiver receiver;//连接服务的广播
+    private DataAcceptBroadcastReceiver acceptReceiver;//连接服务的广播
     private boolean isConnectedToInternet = false;//是否鏈接到網絡
     private PopupWindow popupWindow;//选择的popupWindow;
     private String[] mIpArray = {"开发：117.78.48.143", "马佩：192.168.0.24"};//提供选择的ip地址。
     private String ipAddress = null;//ip地址。
+    public String ACTION = "DataAcceptBroadcastReceiver";//接受数据的广播
+    private static final int TIME = 1;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
-            tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
-            int offset = tvContent.getLineCount() * tvContent.getLineHeight();
-            if (offset > tvContent.getHeight()) {
-                tvContent.scrollTo(0, offset - tvContent.getHeight());
+            switch (msg.what) {
+                case TIME:
+                    long systime = System.currentTimeMillis();
+                    CharSequence systimeStr = DateFormat.format("hh:mm:ss", systime);
+                    tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
+//                    tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
+                    tvContent.append(systimeStr);
+                    int offset = tvContent.getLineCount() * tvContent.getLineHeight();
+                    if (offset > tvContent.getHeight()) {
+                        tvContent.scrollTo(0, offset - tvContent.getHeight());
+                    }
+                    break;
+                default:
+                    break;
             }
+
         }
     };
 
@@ -225,9 +241,16 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         //服务初始化
         Intent intent = new Intent(mContext, DataConnectService.class);
         intent.setAction(START_SERVICE);
-        //广播初始化
+        //连接数据广播初始化
         IntentFilter filter = new IntentFilter(Intent.ACTION_TIME_TICK);
         receiver = new DataConnectBroadcastReceiver();
+
+        //反馈广播初始化
+        IntentFilter acceptFilter = new IntentFilter();
+        acceptFilter.addAction(ACTION);
+        acceptReceiver = new DataAcceptBroadcastReceiver();
+
+        registerReceiver(acceptReceiver, acceptFilter);
 
         //在打开一个广播监听服务的启动状态
         //注册系统的ACTION_TIME_TIME广播，每秒监听服务是否开启。
@@ -240,6 +263,9 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             tvSendMsg.setText(R.string.StringSending);
             btnSend.setText(R.string.StringSendingBtn);
             registerReceiver(receiver, filter);//注冊廣播
+            registerReceiver(acceptReceiver, acceptFilter);
+
+            new TimeThread().start();
         } else {
             stopService(intent);
             sendding = false;
@@ -248,6 +274,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             btnSend.setText(R.string.StringSendData);
             if (receiver != null) {
                 unregisterReceiver(receiver);
+                unregisterReceiver(acceptReceiver);
                 receiver = null;//這裏賦值為空。
             }
 //                                //終止發送則發出一個廣播保證真的終止(這裏由於系統權限的問題不能夠終止系統的廣播。但是可以發送其它的廣播)
@@ -258,8 +285,35 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         }
         editor.putBoolean("sendding", sendding);
         editor.commit();
-        Message msg = new Message();
-        msg.obj = sendding;
-        handler.sendMessage(msg);
+    }
+
+    public class DataAcceptBroadcastReceiver extends BroadcastReceiver {
+        public DataAcceptBroadcastReceiver() {
+
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("--qydq--MainActivity收到DataSendClientHandler消息");
+//            Message msg = new Message();
+//            msg.obj = sendding;
+//            handler.sendMessage(msg);
+        }
+    }
+
+    public class TimeThread extends Thread {
+        @Override
+        public void run() {
+            do {
+                try {
+                    Thread.sleep(1000);
+                    Message msg = new Message();
+                    msg.what = TIME;
+                    handler.sendMessage(msg);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (true);
+        }
     }
 }
