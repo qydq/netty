@@ -77,6 +77,8 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 //        sendding = true;
+
+
         System.out.println("--qydq--客户端收到消息" + msg + "www" + sendding);
         String str = (String) msg;
         System.out.println("--qydq--客户端收到消息" + str + " " + ++count);
