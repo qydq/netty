@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/includeHead"
+        layout="@layout/base_headview_standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/anLlLayoutCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/includeHead"
+        android:layout_centerInParent="true"
+        android:background="@color/CommColorWhite"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNet"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@color/CommTxtMainTipsColor"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/CommDimenMargin"
+            android:text="@string/StringNet"
+            android:textColor="@color/ColorRed"
+            android:textSize="@dimen/CommDimenTxtSmall"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/CommColorWhite"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSendMsg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DimenNativeNational"
+                android:layout_marginLeft="@dimen/CommDimenMargin"
+                android:gravity="center_vertical"
+                android:text="@string/StringSendDataMsg"
+                android:textColor="@color/CommTxtMainTintColor"
+                android:textSize="@dimen/CommDimenTxtSmall" />
+
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DimenNativeNational"
+                android:background="@drawable/yy_drawable_selector_md_oppose"
+                android:gravity="center"
+                android:text="@string/StringSendData"
+                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/CommColorWhite"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DimenNativeNational"
+                android:layout_marginLeft="@dimen/CommDimenMargin"
+                android:gravity="center_vertical"
+                android:text="@string/StringIp"
+                android:textColor="@color/CommTxtMainTintColor"
+                android:textSize="@dimen/CommDimenTxtSmall" />
+
+            <Button
+                android:id="@+id/btnIp1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DimenNativeNational"
+                android:background="@drawable/yy_drawable_selector_md_oppose"
+                android:gravity="center"
+                android:text="@string/StringIp1"
+                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
+
+            <Button
+                android:id="@+id/btnIp2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/DimenNativeNational"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/yy_drawable_selector_md_oppose"
+                android:gravity="center"
+                android:text="@string/StringIp2"
+                android:textColor="@drawable/yy_drawable_selector_txt_oppose" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
