@@ -1,7 +1,9 @@
 package com.an.app.netty;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.an.base.utils.DataService;
 
@@ -14,6 +16,7 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
 
     private int count = 0;
     private Context context;
+
 
     public DataSendClientHandler(Context context) {
         this.context = context;
@@ -40,6 +43,7 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
         System.out.println("--- Server is inactive ---");
         // 10s 之后尝试重新连接服务器
         System.out.println("10s 之后尝试重新连接服务器...");
+        Thread.sleep(10 * 1000);
         new DataSendClient(context).start();
     }
 
@@ -55,5 +59,4 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
-
 }

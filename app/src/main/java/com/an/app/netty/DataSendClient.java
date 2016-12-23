@@ -25,27 +25,34 @@ public class DataSendClient extends Thread {
     private static final int PORT = 6008;
     private Context context;
     private SharedPreferences sp;
+    private boolean sendding = false;
 
     public DataSendClient(Context context) {
         this.context = context;
         sp = context.getSharedPreferences("SuperActivity", Activity.MODE_PRIVATE);
         HOST = sp.getString("hostip", HOST);
+        sendding = sp.getBoolean("sendding", false);
     }
 
     @Override
     public void run() {
-        try {
-            System.out.println("--qydq--跑呀跑跑呀跑");
-            connect();
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("--qydq--正在發送數據--" + sendding);
+        if (sendding) {
+            try {
+                System.out.println("--qydq--跑呀跑跑呀跑");
+                connect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("--qydq--跑累了歇歇吧。");
         }
     }
 
     private void connect() throws Exception {
         //配置客户端的NIO线程组
         EventLoopGroup group = new NioEventLoopGroup();
-        System.out.println("DataSendClient--qydq--跑呀跑");
+        System.out.println("DataSendClient--qydq--IP地址" + HOST);
         try {
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class)
@@ -72,7 +79,7 @@ public class DataSendClient extends Thread {
     }
 
 //    public void sendDataToService() throws Exception {
-//        new DataSendClient().connect();
+//        new DataSendClient(context).connect();
 //    }
 
 }

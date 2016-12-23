@@ -37,7 +37,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private boolean sendding = false;//是否正在发送。
     private SharedPreferences.Editor editor;//保存是否点击服务开启的监听状态的editor
     private DataConnectBroadcastReceiver receiver;
-    private boolean isConnectedToInternet = false;
+    private boolean isConnectedToInternet = false;//是否鏈接到網絡
 
     @Override
     public void initView() {
@@ -102,7 +102,6 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                                 sendding = true;
                                 tvSendMsg.setText(R.string.StringSending);
                                 btnSend.setText(R.string.StringSendingBtn);
-
                                 registerReceiver(receiver, filter);//注冊廣播
                             } else {
                                 stopService(intent);
@@ -113,10 +112,6 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                                     unregisterReceiver(receiver);
                                     receiver = null;//這裏賦值為空。
                                 }
-                                //終止發送則發出一個廣播保證真的終止
-                                Intent stopIntent = new Intent(Intent.ACTION_TIME_TICK);
-                                stopIntent.putExtra("kill", 0);
-                                sendOrderedBroadcast(stopIntent, null);
                             }
                             editor.putBoolean("sendding", sendding);
                             editor.commit();

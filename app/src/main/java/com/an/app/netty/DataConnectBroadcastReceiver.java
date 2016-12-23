@@ -19,26 +19,24 @@ public class DataConnectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         System.out.println(TAG + "--qydq--收到DataConnectService启动的广播--");
-        if (intent.getIntExtra("kill", 1) == 0) {
-            abortBroadcast();
-            System.out.println(TAG + "--qydq--收到DataConnectService启动的广播--終止廣播--");
-            return;
-        }
         if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
             ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
                 if ("com.an.app.netty.DataConnectService".equals(service.service.getClassName())) {
-                    System.out.println(TAG + "--qydq--服务打开--");
+                    System.out.println(TAG + "--qydq--服务已經打开--");
                     isServiceRunning = true;
                 }
             }
             //如果服务没有启动，。则根据保存的状态的editor，sendding来判断是否需要重新开启服务，sendding正在发送，service却死了，则需要重启服务。
             sendding = context.getSharedPreferences("SuperActivity", Context.MODE_PRIVATE).getBoolean("sendding", false);
             if (!isServiceRunning && sendding) {
-                System.out.println(TAG + "--qydq--服务已关闭--");
+                System.out.println(TAG + "--qydq--服务正在重新啓動--");
                 Intent serviceIntent = new Intent(context, DataConnectService.class);
                 serviceIntent.setAction(START_SERVICE);
                 context.startService(serviceIntent);
+            }
+            if (!sendding) {
+                System.out.println(TAG + "--qydq--服务已关闭--");
             }
         }
     }
