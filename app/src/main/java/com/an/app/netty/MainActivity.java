@@ -313,7 +313,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (true);
+            } while (sendding);
         }
     }
 }
