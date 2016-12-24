@@ -9,5 +9,5 @@
     <string name="StringTips">选择或输入ip地址(默认192.168.0.24)</string>
     <string name="StringHint">请输入Ip地址</string>
     <string name="StringIpInfo">请输入有效的ip地址哟``</string>
-    <string name="StringData">数据监测</string>
+    <string name="StringData">数据监测记录</string>
 </resources>

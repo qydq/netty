@@ -24,11 +24,12 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
     public DataSendClientHandler(Context context) {
         this.context = context;
         sp = context.getSharedPreferences("SuperActivity", Activity.MODE_PRIVATE);
-        sendding = sp.getBoolean("sendding", true);
+
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        sendding = sp.getBoolean("sendding", true);
         if (sendding) {
             String dataString = DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator");
             System.out.println("--qydq--時間--" + dataString);
@@ -57,7 +58,8 @@ public class DataSendClientHandler extends ChannelInboundHandlerAdapter {
         String str = (String) msg;
         System.out.println("--qydq--客户端收到消息" + str + "context" + context.toString());
         Intent intent = new Intent(context, MainActivity.DataAcceptBroadcastReceiver.class);
-        intent.setAction("DataAcceptBroadcastReceiver");
+        intent.setAction("accept");
+        intent.putExtra("ret", str);
         context.sendBroadcast(intent);
         if (sendding) {
             channelActive(ctx);

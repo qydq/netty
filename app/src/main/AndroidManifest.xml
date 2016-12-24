@@ -22,6 +22,11 @@
                 <action android:name="com.an.app.netty.DataConnectService" />  
             </intent-filter>
         </service>
+        <receiver android:name=".MainActivity$DataAcceptBroadcastReceiver">
+            <intent-filter>
+                <action android:name="accept" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

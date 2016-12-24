@@ -61,8 +61,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private LinearLayout llSend;
     @ViewInject(R.id.anPb)
     private ProgressBar anPb;
-    @ViewInject(R.id.tvContent)
-    private TextView tvContent;
+
+    private static TextView tvContent;
 
     private String START_SERVICE = "com.an.app.netty.DataConnectService";
     private boolean sendding = false;//是否正在发送。
@@ -75,7 +75,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private String ipAddress = null;//ip地址。
     public String ACTION = "DataAcceptBroadcastReceiver";//接受数据的广播
     private static final int TIME = 1;
-    private Handler handler = new Handler() {
+    private static final int SERVERDATA = 2;
+    public static final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -85,10 +86,19 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     CharSequence systimeStr = DateFormat.format("yyyy.MM.dd.  HH:mm:ss", systime);
                     tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
 //                    tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
-                    tvContent.append(systimeStr + System.getProperty("line.separator"));
+                    tvContent.append("--收到消息--" + systimeStr + System.getProperty("line.separator"));
                     int offset = tvContent.getLineCount() * tvContent.getLineHeight();
                     if (offset > tvContent.getHeight()) {
                         tvContent.scrollTo(0, offset - tvContent.getHeight());
+                    }
+                    break;
+                case SERVERDATA:
+                    tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
+                    String ret = (String) msg.obj;
+                    tvContent.append("-- -- 收到消息 -- " + ret + "-- --" + System.getProperty("line.separator"));
+                    int mOffset = tvContent.getLineCount() * tvContent.getLineHeight();
+                    if (mOffset > tvContent.getHeight()) {
+                        tvContent.scrollTo(0, mOffset - tvContent.getHeight());
                     }
                     break;
                 default:
@@ -100,6 +110,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
 
     @Override
     public void initView() {
+        tvContent = (TextView) findViewById(R.id.tvContent);
         anLlBack.setVisibility(View.INVISIBLE);
         anLlRight.setVisibility(View.INVISIBLE);
         if (NetBroadcastReceiverUtils.isConnectedToInternet(mContext)) {
@@ -169,6 +180,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                         @Override
                         public void run() {
                             if (DataService.INSTANCE.checkIp(editTextIp.getText().toString().trim())) {
+                                tvTpMsg.setVisibility(View.INVISIBLE);
                                 sendDataToService();
                             } else {
                                 tvTpMsg.setVisibility(View.VISIBLE);
@@ -247,8 +259,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
 
         //反馈广播初始化
         IntentFilter acceptFilter = new IntentFilter();
-        acceptFilter.addAction(ACTION);
-        acceptReceiver = new DataAcceptBroadcastReceiver();
+        acceptFilter.addAction("accept");
+        acceptReceiver = new DataAcceptBroadcastReceiver(mHandler);
 
         registerReceiver(acceptReceiver, acceptFilter);
 
@@ -265,7 +277,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             registerReceiver(receiver, filter);//注冊廣播
             registerReceiver(acceptReceiver, acceptFilter);
 
-            new TimeThread().start();
+//            new TimeThread().start();//监听本地时间变化。
         } else {
             stopService(intent);
             sendding = false;
@@ -287,17 +299,25 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         editor.commit();
     }
 
-    public class DataAcceptBroadcastReceiver extends BroadcastReceiver {
-        public DataAcceptBroadcastReceiver() {
+    public static class DataAcceptBroadcastReceiver extends BroadcastReceiver {
+        private final Handler handler;
 
+        public DataAcceptBroadcastReceiver() {
+            handler = mHandler;
+        }
+
+        public DataAcceptBroadcastReceiver(Handler handler) {
+            this.handler = handler;
         }
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             System.out.println("--qydq--MainActivity收到DataSendClientHandler消息");
-//            Message msg = new Message();
-//            msg.obj = sendding;
-//            handler.sendMessage(msg);
+            System.out.println("--qydq--MainActivity收到DataSendClientHandler消息--内容--" + intent.getStringExtra("ret"));
+            Message msg = new Message();
+            msg.obj = intent.getStringExtra("ret");
+            msg.what = SERVERDATA;
+            handler.sendMessage(msg);
         }
     }
 
@@ -309,7 +329,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     Thread.sleep(1000);
                     Message msg = new Message();
                     msg.what = TIME;
-                    handler.sendMessage(msg);
+                    mHandler.sendMessage(msg);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
