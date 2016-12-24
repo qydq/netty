@@ -181,6 +181,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                         public void run() {
                             if (DataService.INSTANCE.checkIp(editTextIp.getText().toString().trim())) {
                                 tvTpMsg.setVisibility(View.INVISIBLE);
+                                tvContent.append("正在连接中..." + System.getProperty("line.separator"));
                                 sendDataToService();
                             } else {
                                 tvTpMsg.setVisibility(View.VISIBLE);
