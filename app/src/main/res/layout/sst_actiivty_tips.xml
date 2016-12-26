@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/includeHead"
+        layout="@layout/base_headview_standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/anLlLayoutCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/includeHead"
+        android:layout_centerInParent="true"
+        android:background="@color/CommColorWhite"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvProtocol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:overScrollMode="always"
+            android:scrollbars="vertical"
+            android:text="@string/StringTipsInfo"
+            android:textColor="@color/CommTxtMainColor" />
+    </LinearLayout>
+</RelativeLayout>

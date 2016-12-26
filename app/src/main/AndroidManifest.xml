@@ -27,6 +27,7 @@
                 <action android:name="accept" />
             </intent-filter>
         </receiver>
+        <activity android:name=".TipsActivity" />
     </application>
 
 </manifest>

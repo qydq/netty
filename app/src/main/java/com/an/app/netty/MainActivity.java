@@ -62,7 +62,15 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     @ViewInject(R.id.anPb)
     private ProgressBar anPb;
 
+    @ViewInject(R.id.anTvRight)
+    private TextView anTvRight;
+    @ViewInject(R.id.anIvRight)
+    private ImageView anIvRight;
+
+    private static TextView tvTime;
     private static TextView tvContent;
+    private static TextView tvBtnMes;
+    private static TextView tvContentTips;
 
     private String START_SERVICE = "com.an.app.netty.DataConnectService";
     private boolean sendding = false;//是否正在发送。
@@ -74,8 +82,14 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private String[] mIpArray = {"开发：117.78.48.143", "马佩：192.168.0.24"};//提供选择的ip地址。
     private String ipAddress = null;//ip地址。
     public String ACTION = "DataAcceptBroadcastReceiver";//接受数据的广播
-    private static final int TIME = 1;
-    private static final int SERVERDATA = 2;
+    private static final int TIME = 1;//在没有数据时，仿真数据。
+    private static final int SERVERDATA = 2;//真是服务器返回的数据。
+    private static final int TIME_ACCOUNT = 3;//监听服务器返回的时间。。
+    private static final int SERVERDATA_STATE = 4;//监听服务器是否异常的what值。
+    private static boolean isRunnint = false;//监听服务器是否正常的boolean。
+    private static int i = -1;//记录时间初始化，下面循环,-1减少时间统计误差
+    private static int acceptAccount = 0;
+    //mHandler用于更新UI。
     public static final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -101,18 +115,49 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                         tvContent.scrollTo(0, mOffset - tvContent.getHeight());
                     }
                     break;
+                case TIME_ACCOUNT:
+//                    tvTime.setText("数据监测记录(Time : " + msg.arg1 + " s)");
+                    break;
+                case SERVERDATA_STATE:
+                    tvBtnMes.setText((String) msg.obj);
+                    if (msg.obj.equals("服务器无响应")) {
+                        tvBtnMes.setVisibility(View.VISIBLE);
+                        tvContentTips.setText("-- --正在重新接受数据...");
+                    } else {
+                        tvBtnMes.setVisibility(View.INVISIBLE);
+//                        tvContentTips.setText("-- -- 正在接受数据...");
+                    }
+                    break;
                 default:
                     break;
             }
 
         }
     };
+    private String startTime;
 
     @Override
     public void initView() {
         tvContent = (TextView) findViewById(R.id.tvContent);
+        tvTime = (TextView) findViewById(R.id.tvTime);
+        tvBtnMes = (TextView) findViewById(R.id.tvBtnMes);
+        tvContentTips = (TextView) findViewById(R.id.tvContentTips);
         anLlBack.setVisibility(View.INVISIBLE);
-        anLlRight.setVisibility(View.INVISIBLE);
+//        anLlRight.setVisibility(View.INVISIBLE);
+        anIvRight.setVisibility(View.INVISIBLE);
+        anTvRight.setText("tips");
+        anLlRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, TipsActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (NetBroadcastReceiverUtils.isConnectedToInternet(mContext)) {
             isConnectedToInternet = true;
         } else {
@@ -123,15 +168,20 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         editor = sp.edit();
         sendding = sp.getBoolean("sendding", false);
         ipAddress = sp.getString("hostip", null);
+        startTime = sp.getString("startTime", null);
         if (sendding) {
             anPb.setVisibility(View.VISIBLE);
             tvSendMsg.setText(R.string.StringSending);
             btnSend.setText(R.string.StringSendingBtn);
+            if (!TextUtils.isEmpty(startTime)) {
+                tvTime.setText("数据监测记录(Time:" + startTime + ")");
+            }
         }
         if (!TextUtils.isEmpty(ipAddress)) {
             editTextIp.setText(ipAddress);
             tvTips.setText("选择或输入ip地址(当前ip:" + ipAddress + ")");
         }
+
         llSend.setOnClickListener(this);
         ivSelector.setOnClickListener(this);
         editTextIp.addTextChangedListener(new TextWatcher() {
@@ -181,7 +231,6 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                         public void run() {
                             if (DataService.INSTANCE.checkIp(editTextIp.getText().toString().trim())) {
                                 tvTpMsg.setVisibility(View.INVISIBLE);
-                                tvContent.append("正在连接中..." + System.getProperty("line.separator"));
                                 sendDataToService();
                             } else {
                                 tvTpMsg.setVisibility(View.VISIBLE);
@@ -273,16 +322,29 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             startService(intent);//立即開啓一個服務。
             sendding = true;
             anPb.setVisibility(View.VISIBLE);
+            tvTime.setText(R.string.StringData);
+            tvContentTips.setText(R.string.StringConneting);
             tvSendMsg.setText(R.string.StringSending);
             btnSend.setText(R.string.StringSendingBtn);
+            tvContent.setText("");//初始化tvContent内容
             registerReceiver(receiver, filter);//注冊廣播
-            registerReceiver(acceptReceiver, acceptFilter);
-
-//            new TimeThread().start();//监听本地时间变化。
+            registerReceiver(acceptReceiver, acceptFilter);//注册广播接收服务器数据的。
+            i = -1;//暂停是把i值服务-2；
+            tvBtnMes.setText("");
+            startTime = DataService.INSTANCE.getLongDateTime();
+            editor.putString("startTime", startTime);
+            editor.commit();
+            tvTime.setText("数据监测记录(Time:" + startTime + ")");
+            new TimeAcountThread().start();//统计时间的线程。
+//            new TimeThread().start();//监听本地时间变化。线程，非广播，广播见aw-an框架。
         } else {
             stopService(intent);
             sendding = false;
+            mHandler.removeMessages(SERVERDATA_STATE);//移除SERVERDATA_STATE消息。
+            mHandler.removeMessages(TIME_ACCOUNT);//移除SERVERDATA_STATE消息。
             anPb.setVisibility(View.INVISIBLE);
+            tvContentTips.setText(R.string.StringPause);
+            tvBtnMes.setText("");//停止监测中。
             tvSendMsg.setText(R.string.StringSendDataMsg);
             btnSend.setText(R.string.StringSendData);
             if (receiver != null) {
@@ -290,6 +352,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                 unregisterReceiver(acceptReceiver);
                 receiver = null;//這裏賦值為空。
             }
+            String getTime = tvTime.getText().toString().trim();
+            tvTime.setText(getTime.subSequence(0, getTime.length() - 1) + "--" + DataService.INSTANCE.getLongDateTime() + ")");
 //                                //終止發送則發出一個廣播保證真的終止(這裏由於系統權限的問題不能夠終止系統的廣播。但是可以發送其它的廣播)
             //http://blog.csdn.net/ACM_TH/article/details/50509755
 //                                Intent stopIntent = new Intent(Intent.ACTION_TIME_TICK);
@@ -313,8 +377,9 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
 
         @Override
         public void onReceive(Context context, final Intent intent) {
-            System.out.println("--qydq--MainActivity收到DataSendClientHandler消息");
             System.out.println("--qydq--MainActivity收到DataSendClientHandler消息--内容--" + intent.getStringExtra("ret"));
+            isRunnint = true;
+            acceptAccount++;
             Message msg = new Message();
             msg.obj = intent.getStringExtra("ret");
             msg.what = SERVERDATA;
@@ -331,6 +396,40 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     Message msg = new Message();
                     msg.what = TIME;
                     mHandler.sendMessage(msg);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (sendding);
+        }
+    }
+
+    public class TimeAcountThread extends Thread {
+        @Override
+        public void run() {
+            do {
+                try {
+                    Thread.sleep(1000);
+                    i++;
+                    //msg已使用不能再用。This message is already in use.放在循环外面。
+                    Message msg = new Message();
+                    Message serverMsg = new Message();
+                    msg.what = TIME_ACCOUNT;
+                    msg.arg1 = i;
+                    mHandler.sendMessage(msg);
+                    //每十秒钟监听服务器是否连接成功。i不从0开始。
+                    if (i > 0 && i % 10 == 0 && isRunnint) {
+                        serverMsg.what = SERVERDATA_STATE;
+                        serverMsg.obj = "监测正常";
+                        mHandler.sendMessage(serverMsg);
+                    }
+                    if (i > 0 && i % 10 == 0 && !isRunnint) {
+                        serverMsg.what = SERVERDATA_STATE;
+                        serverMsg.obj = "服务器无响应";
+                        mHandler.sendMessage(serverMsg);
+                    }
+                    //这行代码很重要。isRunnint = true时，变为初始状态false，收到广播的时候会变为true，先执行上面两个if语句。
+//                    isRunnint = false;
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

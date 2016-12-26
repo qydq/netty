@@ -10,4 +10,12 @@
     <string name="StringHint">请输入Ip地址</string>
     <string name="StringIpInfo">请输入有效的ip地址哟``</string>
     <string name="StringData">数据监测记录</string>
+    <string name="StringConneting">-- -- 正在接受数据...</string>
+    <string name="StringPause">-- -- 已停止连接。。</string>
+    <string name="StringTipsInfo">\n\t使用说明：\n\t\t
+        \n\t\t1.使用时先选择或输入待测试的ip地址。\n\t\t
+        2.再点击发送数据按钮既可以在后台发送数据到服务器。\n\t\t
+        3.数据监测纪录会记录监测后台服务器发送回来的数据。\n\t\t
+        4.在监测时可以点击停止监测会记录监测结束的时间。
+    </string>
 </resources>
