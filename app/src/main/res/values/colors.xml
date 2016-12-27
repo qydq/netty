@@ -3,6 +3,6 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="CommColorOppose">#25000000</color>
-    <color name="CommColorOpposeClicked">#FF4081</color>
+    <color name="CommColorOppose">#FF4081</color>
+    <color name="CommColorOpposeClicked">#25000000</color>
 </resources>

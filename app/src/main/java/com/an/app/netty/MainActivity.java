@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,6 +70,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private static TextView tvContent;
     private static TextView tvBtnMes;
     private static TextView tvContentTips;
+    private static TextView tvCount;
+    private static TextView tvSendCount;
 
     private String START_SERVICE = "com.an.app.netty.DataConnectService";
     private boolean sendding = false;//是否正在发送。
@@ -89,6 +90,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
     private static boolean isRunnint = false;//监听服务器是否正常的boolean。
     private static int i = -1;//记录时间初始化，下面循环,-1减少时间统计误差
     private static int acceptAccount = 0;
+    private static int sendAccount = -1;
+    private static final int INIT = 5;
     //mHandler用于更新UI。
     public static final Handler mHandler = new Handler() {
         @Override
@@ -96,7 +99,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             super.handleMessage(msg);
             switch (msg.what) {
                 case TIME:
-                    long systime = System.currentTimeMillis();
+                    /*long systime = System.currentTimeMillis();
                     CharSequence systimeStr = DateFormat.format("yyyy.MM.dd.  HH:mm:ss", systime);
                     tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
 //                    tvContent.append(DataService.INSTANCE.getLongDateTime() + System.getProperty("line.separator"));
@@ -104,7 +107,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     int offset = tvContent.getLineCount() * tvContent.getLineHeight();
                     if (offset > tvContent.getHeight()) {
                         tvContent.scrollTo(0, offset - tvContent.getHeight());
-                    }
+                    }*/
+                    tvSendCount.setText("已发送：" + sendAccount);
                     break;
                 case SERVERDATA:
                     tvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -114,6 +118,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     if (mOffset > tvContent.getHeight()) {
                         tvContent.scrollTo(0, mOffset - tvContent.getHeight());
                     }
+                    tvCount.setText("已接收:" + msg.arg1);
                     break;
                 case TIME_ACCOUNT:
 //                    tvTime.setText("数据监测记录(Time : " + msg.arg1 + " s)");
@@ -126,6 +131,15 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
                     } else {
                         tvBtnMes.setVisibility(View.INVISIBLE);
 //                        tvContentTips.setText("-- -- 正在接受数据...");
+                    }
+                    break;
+                case INIT:
+                    try {
+                        Thread.sleep(3000);
+                        acceptAccount = 0;
+                        sendAccount = 2;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                     break;
                 default:
@@ -142,6 +156,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         tvTime = (TextView) findViewById(R.id.tvTime);
         tvBtnMes = (TextView) findViewById(R.id.tvBtnMes);
         tvContentTips = (TextView) findViewById(R.id.tvContentTips);
+        tvCount = (TextView) findViewById(R.id.tvCount);
+        tvSendCount = (TextView) findViewById(R.id.tvSendCount);
         anLlBack.setVisibility(View.INVISIBLE);
 //        anLlRight.setVisibility(View.INVISIBLE);
         anIvRight.setVisibility(View.INVISIBLE);
@@ -336,7 +352,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             editor.commit();
             tvTime.setText("数据监测记录(Time:" + startTime + ")");
             new TimeAcountThread().start();//统计时间的线程。
-//            new TimeThread().start();//监听本地时间变化。线程，非广播，广播见aw-an框架。
+            new TimeThread().start();//监听本地时间变化。线程，非广播，广播见aw-an框架。
         } else {
             stopService(intent);
             sendding = false;
@@ -362,6 +378,17 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         }
         editor.putBoolean("sendding", sendding);
         editor.commit();
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(2000);
+//                    mHandler.sendEmptyMessage(INIT);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, 3000);
     }
 
     public static class DataAcceptBroadcastReceiver extends BroadcastReceiver {
@@ -383,6 +410,7 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
             Message msg = new Message();
             msg.obj = intent.getStringExtra("ret");
             msg.what = SERVERDATA;
+            msg.arg1 = acceptAccount;
             handler.sendMessage(msg);
         }
     }
@@ -392,7 +420,8 @@ public class MainActivity extends SuperActivity implements View.OnClickListener 
         public void run() {
             do {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
+                    sendAccount++;
                     Message msg = new Message();
                     msg.what = TIME;
                     mHandler.sendMessage(msg);
